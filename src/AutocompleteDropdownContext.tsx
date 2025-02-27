@@ -11,12 +11,14 @@ export interface IAutocompleteDropdownContext {
   setDirection: Dispatch<SetStateAction<IAutocompleteDropdownContext['direction']>>
   activeInputContainerRef?: MutableRefObject<View | null>
   activeControllerRef?: MutableRefObject<IAutocompleteDropdownRef | null>
-  controllerRefs?: MutableRefObject<IAutocompleteDropdownRef[]>
+  controllerRefs?: MutableRefObject<IAutocompleteDropdownRef[]>,
+  closeOnTouchEnd?: boolean
 }
 
 export interface IAutocompleteDropdownContextProviderProps {
   headerOffset?: number
   children: React.ReactNode
+  closeOnTouchEnd?: boolean
 }
 
 export const AutocompleteDropdownContext = React.createContext<IAutocompleteDropdownContext>({
@@ -26,12 +28,13 @@ export const AutocompleteDropdownContext = React.createContext<IAutocompleteDrop
   setDirection: () => null,
   activeInputContainerRef: undefined,
   activeControllerRef: undefined,
-  controllerRefs: undefined,
+  controllerRefs: undefined
 })
 
 export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContextProviderProps> = ({
   headerOffset = 0,
   children,
+  closeOnTouchEnd= true
 }) => {
   const [content, setContent] = useState<IAutocompleteDropdownContext['content']>()
   const [direction, setDirection] = useState<IAutocompleteDropdownContext['direction']>(undefined)
@@ -140,8 +143,10 @@ export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContex
         ref={wrapperRef}
         style={styles.clickOutsideHandlerArea}
         onTouchEnd={() => {
-          activeControllerRef.current?.close()
-          activeControllerRef.current?.blur()
+          if(closeOnTouchEnd){ 
+            activeControllerRef.current?.close()
+            activeControllerRef.current?.blur()
+          }
         }}>
         {children}
       </View>
