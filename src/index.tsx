@@ -38,7 +38,7 @@ import { theme } from './theme'
 import type { IAutocompleteDropdownProps, AutocompleteDropdownItem } from './types'
 
 export * from './types'
-export { AutocompleteDropdownContextProvider }
+export { AutocompleteDropdownContextProvider,AutocompleteDropdownContext }
 
 export const AutocompleteDropdown = memo<
   React.ForwardRefExoticComponent<Omit<IAutocompleteDropdownProps, 'ref'> & React.RefAttributes<unknown>>
