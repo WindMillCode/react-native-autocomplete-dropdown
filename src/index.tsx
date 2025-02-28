@@ -454,6 +454,8 @@ export const AutocompleteDropdown = memo<
     }, [loading, searchText])
 
     useEffect(() => {
+      console.log(isOpened)
+      console.log(dataSet)
       if (isOpened && Array.isArray(dataSet)) {
         if (activeInputContainerRef) {
           activeInputContainerRef.current = containerRef.current
@@ -473,7 +475,9 @@ export const AutocompleteDropdown = memo<
           />,
         )
       } else {
-        setContent(undefined)
+        setTimeout(() => {
+          setContent(undefined)
+        }, 1000);
       }
     }, [
       ListEmptyComponent,
