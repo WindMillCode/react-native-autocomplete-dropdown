@@ -86,6 +86,7 @@ export const AutocompleteDropdown = memo<
       containerStyle,
       inputContainerStyle,
       suggestionsListTextStyle,
+      useStateIsOpened
     } = props
     const InputComponent = (props.InputComponent as typeof TextInput) || TextInput
     const inputRef = useRef<TextInput>(null)
@@ -94,7 +95,7 @@ export const AutocompleteDropdown = memo<
     const [inputValue, setInputValue] = useState('')
     const [loading, setLoading] = useState(loadingProp)
     const [selectedItem, setSelectedItem] = useState<AutocompleteDropdownItem | null>(null)
-    const [isOpened, setIsOpened] = useState(false)
+    const [isOpened, setIsOpened] = useStateIsOpened?? useState(false)
     const initialDataSetRef = useRef<AutocompleteDropdownItem[] | null>(dataSetProp)
     const initialValueRef = useRef(initialValueProp)
     const [dataSet, setDataSet] = useState(dataSetProp)
@@ -454,8 +455,6 @@ export const AutocompleteDropdown = memo<
     }, [loading, searchText])
 
     useEffect(() => {
-      console.log(isOpened)
-      console.log(dataSet)
       if (isOpened && Array.isArray(dataSet)) {
         if (activeInputContainerRef) {
           activeInputContainerRef.current = containerRef.current
@@ -475,9 +474,8 @@ export const AutocompleteDropdown = memo<
           />,
         )
       } else {
-        setTimeout(() => {
-          setContent(undefined)
-        }, 1000);
+        setContent(undefined)
+
       }
     }, [
       ListEmptyComponent,

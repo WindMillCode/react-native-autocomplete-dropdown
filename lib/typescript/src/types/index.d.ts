@@ -56,6 +56,7 @@ export interface IAutocompleteDropdownProps {
     onSubmit?: TextInputProps['onSubmitEditing'];
     onBlur?: TextInputProps['onBlur'];
     onFocus?: TextInputProps['onFocus'];
+    useStateIsOpened?: [boolean, React.Dispatch<React.SetStateAction<boolean>>];
     controller?: MutableRefObject<IAutocompleteDropdownRef | null> | ((controller: IAutocompleteDropdownRef | null) => void);
     containerStyle?: StyleProp<ViewStyle>;
     inputContainerStyle?: StyleProp<ViewStyle>;
