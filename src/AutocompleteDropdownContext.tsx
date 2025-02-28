@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react'
 import type { SetStateAction, Dispatch, FC, ReactElement, MutableRefObject } from 'react'
 import type { LayoutChangeEvent, ViewProps } from 'react-native'
-import { Animated, Easing, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import type { IAutocompleteDropdownRef } from './types'
 
 export interface IAutocompleteDropdownContext {
@@ -51,8 +51,7 @@ export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContex
   const wrapperRef = useRef<View>(null)
   const activeControllerRef = useRef<IAutocompleteDropdownRef | null>(null)
   const controllerRefs = useRef<IAutocompleteDropdownRef[]>([])
-  const positionTrackingIntervalRef = useRef<NodeJS.Timeout>();
-  const contentStylesAnimated = useRef(new Animated.ValueXY()).current;
+  const positionTrackingIntervalRef = useRef<NodeJS.Timeout>()
 
   useEffect(() => {
     if (!inputMeasurements?.height) {
@@ -92,21 +91,6 @@ export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContex
         setInputMeasurements(prev =>
           JSON.stringify(prev) === JSON.stringify(currentMeasurement) ? prev : currentMeasurement,
         )
-
-        if (contentStyles && currentMeasurement) {
-          Animated.timing(contentStylesAnimated, {
-            toValue: {
-              x: currentMeasurement.x,
-              y: direction === 'up'
-                ? currentMeasurement.bottomY - dropdownHeight - 5 - headerOffset
-                : currentMeasurement.topY + currentMeasurement.height + 5 + headerOffset,
-            },
-            duration: 200,
-            easing: Easing.bezier(0.4, 0, 0.2, 1),
-            useNativeDriver: false,
-          }).start();
-        }
-                
         showAfterCalculation && setShow(true)
       })
     })
@@ -167,17 +151,15 @@ export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContex
         {children}
       </View>
       {!!content && show && (
-        <Animated.View
+        <View
           onLayout={onLayout}
-          style={[{
+          style={{
             ...styles.wrapper,
             opacity,
-            // ...contentStyles,
-          },
-          contentStylesAnimated.getLayout(),
-          ]}>
+            ...contentStyles,
+          }}>
           {content}
-        </Animated.View>
+        </View>
       )}
     </AutocompleteDropdownContext.Provider>
   )
