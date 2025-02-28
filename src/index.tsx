@@ -436,7 +436,7 @@ export const AutocompleteDropdown = memo<
     )
 
     useEffect(() => {
-      if ((!content && !inputRef.current?.isFocused()) || loading) {
+      if ((!content && !inputRef.current?.isFocused())) {
         const db = debounce(() => {
           setIsOpened(false)
         }, 100)
