@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react'
 import type { SetStateAction, Dispatch, FC, ReactElement, MutableRefObject } from 'react'
-import type { LayoutChangeEvent, ViewProps } from 'react-native'
-import { LayoutAnimation, StyleSheet, View } from 'react-native'
+import { type LayoutChangeEvent, type ViewProps,LayoutAnimation, StyleSheet, View } from 'react-native'
 import type { IAutocompleteDropdownRef } from './types'
 
 export interface IAutocompleteDropdownContext {

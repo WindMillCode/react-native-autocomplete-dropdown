@@ -8,6 +8,7 @@ import React, {
   useRef,
   useState,
   useContext,
+ 
 } from 'react'
 import debounce from 'lodash.debounce'
 import type {
@@ -26,6 +27,9 @@ import {
   TouchableOpacity,
   View,
   useColorScheme,
+  LayoutAnimation,
+  Animated,
+  UIManager    
 } from 'react-native'
 import { moderateScale, ScaledSheet } from 'react-native-size-matters'
 import { Dropdown } from './Dropdown'
@@ -40,12 +44,7 @@ import type { IAutocompleteDropdownProps, AutocompleteDropdownItem } from './typ
 export * from './types'
 export { AutocompleteDropdownContextProvider,AutocompleteDropdownContext }
 
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+
 export const AutocompleteDropdown = memo<
   React.ForwardRefExoticComponent<Omit<IAutocompleteDropdownProps, 'ref'> & React.RefAttributes<unknown>>
 >(
@@ -118,33 +117,8 @@ export const AutocompleteDropdown = memo<
     const themeName = useColorScheme() || 'light'
     const styles = useMemo(() => getStyles(themeName), [themeName]);
 
-    const dropdownHeight = useSharedValue(0);
-    const dropdownOpacity = useSharedValue(0);    
-
-    const animatedStyles = useAnimatedStyle(() => ({
-      height: dropdownHeight.value,
-      opacity: dropdownOpacity.value,
-    }));    
-
-    useEffect(() => {
-      const itemHeight = moderateScale(40); // Match your item height
-      const itemsCount = dataSet?.length || 0;
-      const calculatedHeight = Math.min(
-        itemsCount * itemHeight,
-        suggestionsListMaxHeight
-      );
-    
-      if (isOpened && itemsCount > 0) {
-        dropdownHeight.value = withTiming(calculatedHeight, {
-          duration: 250,
-          easing: Easing.out(Easing.ease),
-        });
-        dropdownOpacity.value = withTiming(1, { duration: 200 });
-      } else {
-        dropdownHeight.value = withTiming(0, { duration: 200 });
-        dropdownOpacity.value = withTiming(0, { duration: 150 });
-      }
-    }, [isOpened, dataSet, suggestionsListMaxHeight]);    
+    const heightAnim = useRef(new Animated.Value(0)).current
+    const opacityAnim = useRef(new Animated.Value(0)).current
 
     useEffect(() => {
       setLoading(loadingProp)
@@ -486,7 +460,53 @@ export const AutocompleteDropdown = memo<
       if (searchText && inputRef.current?.isFocused() && !loading) {
         setIsOpened(true)
       }
-    }, [loading, searchText])
+    }, [loading, searchText]);
+
+    useEffect(() => {
+      const itemHeight = moderateScale(40)
+      const itemsCount = dataSet?.length || 0
+      const calculatedHeight = Math.min(
+        itemsCount * itemHeight,
+        suggestionsListMaxHeight
+      )
+
+      // Configure animation parameters
+      LayoutAnimation.configureNext({
+        duration: 300,
+        update: {
+          type: LayoutAnimation.Types.easeInEaseOut,
+        }
+      })
+
+      if (isOpened && itemsCount > 0) {
+        Animated.parallel([
+          Animated.timing(heightAnim, {
+            toValue: calculatedHeight,
+            duration: 250,
+            useNativeDriver: false,
+          }),
+          Animated.timing(opacityAnim, {
+            toValue: 1,
+            duration: 200,
+            useNativeDriver: true,
+          })
+        ]).start()
+      } else {
+        Animated.parallel([
+          Animated.timing(heightAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: false,
+          }),
+          Animated.timing(opacityAnim, {
+            toValue: 0,
+            duration: 150,
+            useNativeDriver: true,
+          })
+        ]).start()
+      }
+    }, [isOpened, dataSet, suggestionsListMaxHeight])
+
 
     useEffect(() => {
       if (activeInputContainerRef) {
@@ -494,7 +514,16 @@ export const AutocompleteDropdown = memo<
       }
     
       setContent(
-        <Animated.View style={[animatedStyles, { overflow: 'hidden' }]}>
+        <Animated.View 
+        style={[
+          { 
+            height: heightAnim,
+            opacity: opacityAnim,
+            overflow: 'hidden'
+          }
+        ]}
+
+        >
           <Dropdown
             {...{
               ...props,
@@ -521,7 +550,8 @@ export const AutocompleteDropdown = memo<
       renderItem,
       setContent,
       suggestionsListMaxHeight,
-      animatedStyles, // Add this to dependencies
+      heightAnim,
+      opacityAnim
     ]);
     
 
