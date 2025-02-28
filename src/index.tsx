@@ -27,9 +27,7 @@ import {
   TouchableOpacity,
   View,
   useColorScheme,
-  LayoutAnimation,
-  Animated,
-  UIManager    
+  LayoutAnimation,  UIManager  
 } from 'react-native'
 import { moderateScale, ScaledSheet } from 'react-native-size-matters'
 import { Dropdown } from './Dropdown'
@@ -43,6 +41,9 @@ import type { IAutocompleteDropdownProps, AutocompleteDropdownItem } from './typ
 
 export * from './types'
 export { AutocompleteDropdownContextProvider,AutocompleteDropdownContext }
+
+
+
 
 
 export const AutocompleteDropdown = memo<
@@ -117,8 +118,10 @@ export const AutocompleteDropdown = memo<
     const themeName = useColorScheme() || 'light'
     const styles = useMemo(() => getStyles(themeName), [themeName]);
 
-    const heightAnim = useRef(new Animated.Value(0)).current
-    const opacityAnim = useRef(new Animated.Value(0)).current
+    const configureAnimation = () => {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    };
+
 
     useEffect(() => {
       setLoading(loadingProp)
@@ -462,68 +465,23 @@ export const AutocompleteDropdown = memo<
       }
     }, [loading, searchText]);
 
-    useEffect(() => {
-      const itemHeight = moderateScale(40)
-      const itemsCount = dataSet?.length || 0
-      const calculatedHeight = Math.min(
-        itemsCount * itemHeight,
-        suggestionsListMaxHeight
-      )
 
-      // Configure animation parameters
-      LayoutAnimation.configureNext({
-        duration: 300,
-        update: {
-          type: LayoutAnimation.Types.easeInEaseOut,
-        }
-      })
-
-      if (isOpened && itemsCount > 0) {
-        Animated.parallel([
-          Animated.timing(heightAnim, {
-            toValue: calculatedHeight,
-            duration: 250,
-            useNativeDriver: false,
-          }),
-          Animated.timing(opacityAnim, {
-            toValue: 1,
-            duration: 200,
-            useNativeDriver: true,
-          })
-        ]).start()
-      } else {
-        Animated.parallel([
-          Animated.timing(heightAnim, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: false,
-          }),
-          Animated.timing(opacityAnim, {
-            toValue: 0,
-            duration: 150,
-            useNativeDriver: true,
-          })
-        ]).start()
-      }
-    }, [isOpened, dataSet, suggestionsListMaxHeight])
 
 
     useEffect(() => {
-      if (activeInputContainerRef) {
-        activeInputContainerRef.current = containerRef.current;
-      }
-    
-      setContent(
-        <Animated.View 
-        style={[
-          { 
-            height: heightAnim,
-            opacity: opacityAnim,
-            overflow: 'hidden'
+      if (isOpened && Array.isArray(dataSet)) {
+
+        if (Platform.OS === 'android') {
+          if (UIManager.setLayoutAnimationEnabledExperimental) {
+            UIManager.setLayoutAnimationEnabledExperimental(true);
           }
-        ]}
+        }     
+        configureAnimation();
+        if (activeInputContainerRef) {
+          activeInputContainerRef.current = containerRef.current
+        }
 
-        >
+        setContent(
           <Dropdown
             {...{
               ...props,
@@ -534,24 +492,23 @@ export const AutocompleteDropdown = memo<
               renderItem,
               ListEmptyComponent,
             }}
-          />
-        </Animated.View>
-      );
-    
-      return () => {
-        setContent(undefined);
-      };
+          />,
+        )
+      } else {
+        configureAnimation();
+        setContent(undefined)
+      }
     }, [
+      ListEmptyComponent,
       activeInputContainerRef,
       dataSet,
       direction,
       inputHeight,
+      isOpened,
       props,
       renderItem,
       setContent,
       suggestionsListMaxHeight,
-      heightAnim,
-      opacityAnim
     ]);
     
 
