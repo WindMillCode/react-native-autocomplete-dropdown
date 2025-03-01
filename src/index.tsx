@@ -114,13 +114,12 @@ export const AutocompleteDropdown = memo<
       direction = directionProp,
       setDirection,
       controllerRefs,
+      configureAnimation
     } = useContext(AutocompleteDropdownContext)
     const themeName = useColorScheme() || 'light'
     const styles = useMemo(() => getStyles(themeName), [themeName]);
 
-    const configureAnimation = () => {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    };
+
 
 
     useEffect(() => {
@@ -471,11 +470,7 @@ export const AutocompleteDropdown = memo<
     useEffect(() => {
       if (isOpened && Array.isArray(dataSet)) {
 
-        if (Platform.OS === 'android') {
-          if (UIManager.setLayoutAnimationEnabledExperimental) {
-            UIManager.setLayoutAnimationEnabledExperimental(true);
-          }
-        }     
+     
         configureAnimation();
         if (activeInputContainerRef) {
           activeInputContainerRef.current = containerRef.current

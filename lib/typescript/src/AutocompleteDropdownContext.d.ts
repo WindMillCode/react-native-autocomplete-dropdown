@@ -11,6 +11,7 @@ export interface IAutocompleteDropdownContext {
     activeControllerRef?: MutableRefObject<IAutocompleteDropdownRef | null>;
     controllerRefs?: MutableRefObject<IAutocompleteDropdownRef[]>;
     closeOnTouchEnd?: boolean;
+    configureAnimation: () => void;
 }
 export interface IAutocompleteDropdownContextProviderProps {
     headerOffset?: number;

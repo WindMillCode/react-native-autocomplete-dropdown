@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react'
 import type { SetStateAction, Dispatch, FC, ReactElement, MutableRefObject } from 'react'
-import { type LayoutChangeEvent, type ViewProps,LayoutAnimation, StyleSheet, View } from 'react-native'
+import { type LayoutChangeEvent, type ViewProps,LayoutAnimation, Platform, StyleSheet, UIManager, View } from 'react-native'
 import type { IAutocompleteDropdownRef } from './types'
 
 export interface IAutocompleteDropdownContext {
@@ -11,7 +11,8 @@ export interface IAutocompleteDropdownContext {
   activeInputContainerRef?: MutableRefObject<View | null>
   activeControllerRef?: MutableRefObject<IAutocompleteDropdownRef | null>
   controllerRefs?: MutableRefObject<IAutocompleteDropdownRef[]>,
-  closeOnTouchEnd?: boolean
+  closeOnTouchEnd?: boolean,
+  configureAnimation: () => void
 }
 
 export interface IAutocompleteDropdownContextProviderProps {
@@ -27,9 +28,15 @@ export const AutocompleteDropdownContext = React.createContext<IAutocompleteDrop
   setDirection: () => null,
   activeInputContainerRef: undefined,
   activeControllerRef: undefined,
-  controllerRefs: undefined
+  controllerRefs: undefined,
+  configureAnimation: () => null
 })
 
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+} 
 export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContextProviderProps> = ({
   headerOffset = 0,
   children,
@@ -58,7 +65,7 @@ export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContex
       return
     }
 
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+    configureAnimation()
 
     if (dropdownHeight && direction === 'up') {
       setContentStyles({
@@ -95,7 +102,12 @@ export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContex
         showAfterCalculation && setShow(true)
       })
     })
-  }, [])
+  }, []);
+
+  const configureAnimation = () => {
+     
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  };
 
   useEffect(() => {
     if (content) {
@@ -139,6 +151,7 @@ export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContex
         setDirection,
         activeControllerRef,
         controllerRefs,
+        configureAnimation
       }}>
       <View
         ref={wrapperRef}
