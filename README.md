@@ -327,3 +327,4 @@ if you want to use the dropdown in a modal, you need to wrap the dropdown in ano
         </SafeAreaView>
     </Modal>
 ```
+

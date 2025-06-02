@@ -32,11 +32,7 @@ export const AutocompleteDropdownContext = React.createContext<IAutocompleteDrop
   configureAnimation: () => null
 })
 
-if (Platform.OS === 'android') {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-} 
+
 export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContextProviderProps> = ({
   headerOffset = 0,
   children,
@@ -59,6 +55,12 @@ export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContex
   const controllerRefs = useRef<IAutocompleteDropdownRef[]>([])
   const positionTrackingIntervalRef = useRef<NodeJS.Timeout>()
 
+  useEffect(() => {
+    if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+  }, []);
+  
   useEffect(() => {
     if (!inputMeasurements?.height) {
       setOpacity(0)
