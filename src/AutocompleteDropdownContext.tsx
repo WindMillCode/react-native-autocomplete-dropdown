@@ -153,7 +153,7 @@ export const AutocompleteDropdownContextProvider: FC<IAutocompleteDropdownContex
         setDirection,
         activeControllerRef,
         controllerRefs,
-        configureAnimation
+        configureAnimation,
       }}>
       <View
         ref={wrapperRef}

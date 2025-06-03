@@ -73,5 +73,6 @@ export interface IAutocompleteDropdownProps {
     emptyResultText?: string;
     flatListProps?: Partial<FlatListProps<AutocompleteDropdownItem>>;
     ref?: React.LegacyRef<TextInput> | undefined;
+    testID?: string;
 }
 //# sourceMappingURL=index.d.ts.map

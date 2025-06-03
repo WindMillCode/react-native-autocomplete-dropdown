@@ -90,7 +90,8 @@ export const AutocompleteDropdown = memo<
       containerStyle,
       inputContainerStyle,
       suggestionsListTextStyle,
-      useStateIsOpened
+      useStateIsOpened,
+      testID
     } = props
     const InputComponent = (props.InputComponent as typeof TextInput) || TextInput
     const inputRef = useRef<TextInput>(null)
@@ -340,14 +341,20 @@ export const AutocompleteDropdown = memo<
     }, [ignoreAccents, matchFromStart, caseSensitive, searchText, trimSearchText, useFilter])
 
     const renderItem: ListRenderItem<AutocompleteDropdownItem> = useCallback(
-      ({ item }) => {
+      ({ item,index}) => {
+        const optionTestID = testID+"_Option_"+index
         if (typeof customRenderItem === 'function') {
           const EL = customRenderItem(item, searchText)
-          return <TouchableOpacity onPress={() => _onSelectItem(item)}>{EL}</TouchableOpacity>
+          return <TouchableOpacity 
+          testID={optionTestID}
+          accessibilityLabel={optionTestID}
+          accessible={false}
+          onPress={() => _onSelectItem(item)}>{EL}</TouchableOpacity>
         }
 
         return (
           <ScrollViewListItem
+            testID={optionTestID}        
             key={item.id}
             title={item.title || ''}
             highlight={searchText}
@@ -522,6 +529,9 @@ export const AutocompleteDropdown = memo<
             pointerEvents={Platform.select({ ios: 'box-only', default: 'auto' })}
             onPressOut={onPressOut}>
             <InputComponent
+              testID={testID}
+              accessibilityLabel={testID}
+              accessible={false}
               ref={inputRef}
               value={inputValue}
               onChangeText={onChangeText}

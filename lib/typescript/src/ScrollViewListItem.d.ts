@@ -7,6 +7,7 @@ interface ScrollViewListItemProps {
     onPress?: () => void;
     ignoreAccents?: boolean;
     numberOfLines?: number;
+    testID?: string;
 }
 export declare const ScrollViewListItem: FC<ScrollViewListItemProps>;
 export {};

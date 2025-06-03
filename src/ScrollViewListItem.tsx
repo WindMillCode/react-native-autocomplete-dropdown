@@ -12,10 +12,11 @@ interface ScrollViewListItemProps {
   onPress?: () => void
   ignoreAccents?: boolean
   numberOfLines?: number
+  testID?: string
 }
 
 export const ScrollViewListItem: FC<ScrollViewListItemProps> = memo(
-  ({ highlight, title, style, onPress, ignoreAccents, numberOfLines = 2 }) => {
+  ({ highlight, title, style, onPress, ignoreAccents, numberOfLines = 2,testID }) => {
     const themeName = useColorScheme()
     const styles = useMemo(() => getStyles(themeName || 'light'), [themeName])
 
@@ -40,7 +41,11 @@ export const ScrollViewListItem: FC<ScrollViewListItemProps> = memo(
     }, [highlight, ignoreAccents, title])
 
     return (
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity 
+testID={testID}
+            accessibilityLabel={testID}
+            accessible={false}        
+      onPress={onPress}>
         <View style={styles.container}>
           <Text numberOfLines={numberOfLines}>
             <Text numberOfLines={1} style={{ ...styles.text, ...(style as object) }}>
