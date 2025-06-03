@@ -511,7 +511,7 @@ export const AutocompleteDropdown = memo<
       suggestionsListMaxHeight,
     ]);
     
-
+    const inputTestID = testID+"_Input"
     return (
       <View
         onStartShouldSetResponder={() => true}
@@ -529,8 +529,8 @@ export const AutocompleteDropdown = memo<
             pointerEvents={Platform.select({ ios: 'box-only', default: 'auto' })}
             onPressOut={onPressOut}>
             <InputComponent
-              testID={testID}
-              accessibilityLabel={testID}
+              testID={inputTestID}
+              accessibilityLabel={inputTestID}
               accessible={false}
               ref={inputRef}
               value={inputValue}
