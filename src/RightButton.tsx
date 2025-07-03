@@ -17,6 +17,7 @@ interface RightButtonProps {
   ClearIconComponent?: React.ReactNode
   RightIconComponent?: React.ReactNode
   onRightIconComponentPress?: () => void
+  testID?: string
 }
 
 export const RightButton: React.FC<RightButtonProps> = memo(
@@ -34,6 +35,7 @@ export const RightButton: React.FC<RightButtonProps> = memo(
     ClearIconComponent,
     RightIconComponent,
     onRightIconComponentPress,
+    testID 
   }) => {
     const isOpenedAnimationValue = useRef(new Animated.Value(0)).current
 
@@ -59,19 +61,28 @@ export const RightButton: React.FC<RightButtonProps> = memo(
           ...(buttonsContainerStyle as object),
         }}>
         {(!enableLoadingIndicator || !loading) && showClear && (
-          <TouchableOpacity onPress={onClearPress} style={styles.clearButton}>
+          <TouchableOpacity 
+          testID={testID +"_Clear_Button"}
+          accessibilityLabel={testID +"_Clear_Button"}
+          accessible={false}
+          onPress={onClearPress} style={styles.clearButton}>
             {ClearIconComponent ?? <XCircle width={18} stroke="#aeb4c6" />}
           </TouchableOpacity>
         )}
         {enableLoadingIndicator && loading && <ActivityIndicator color="#999" />}
         {RightIconComponent && (
-          <TouchableOpacity onPress={onRightIconComponentPress} style={styles.chevronButton}>
+          <TouchableOpacity 
+          onPress={onRightIconComponentPress} style={styles.chevronButton}>
             {RightIconComponent}
           </TouchableOpacity>
         )}
         {showChevron && (
           <Animated.View style={{ transform: [{ rotate: chevronSpin }] }}>
-            <TouchableOpacity onPress={onChevronPress} style={styles.chevronButton}>
+            <TouchableOpacity 
+            testID={testID +"_Toggle_Button"}
+            accessibilityLabel={testID +"_Toggle_Button"}
+            accessible={false}              
+            onPress={onChevronPress} style={styles.chevronButton}>
               {ChevronIconComponent ?? <ChevronDown width={20} stroke="#727992" />}
             </TouchableOpacity>
           </Animated.View>

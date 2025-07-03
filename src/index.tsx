@@ -546,6 +546,7 @@ export const AutocompleteDropdown = memo<
             />
           </Pressable>
           <RightButton
+            testID={testID}
             isOpened={isOpened}
             inputHeight={inputHeight}
             onClearPress={onClearPress}

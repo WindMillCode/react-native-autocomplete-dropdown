@@ -14,6 +14,7 @@ interface RightButtonProps {
     ClearIconComponent?: React.ReactNode;
     RightIconComponent?: React.ReactNode;
     onRightIconComponentPress?: () => void;
+    testID?: string;
 }
 export declare const RightButton: React.FC<RightButtonProps>;
 export {};
